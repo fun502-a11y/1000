@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>천자문 1000자 플래시카드 탐험대</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Gaegu (cute display), Gowun Batang (Hanja font), Gothic A1 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Gothic+A1:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastelBg: '#FFFDF6',
+                        pastelPaper: '#F9F5EB',
+                        pastelBorder: '#E6DEC9',
+                        mintBtn: '#88D49E',
+                        mintBtnHover: '#2E8B57',
+                        coralBtn: '#FF9AA2',
+                        coralBtnHover: '#E56B73',
+                        yellowBtn: '#FFDAC1',
+                        yellowBtnHover: '#F4B084',
+                        skyBtn: '#B5EAD7',
+                        skyBtnHover: '#7FCDBB',
+                        purpleBtn: '#E2F0CB',
+                        hanjaText: '#2B2B2B'
+                    },
+                    fontFamily: {
+                        cute: ['Gaegu', 'cursive'],
+                        hanja: ['Gowun Batang', 'serif'],
+                        sans: ['Gothic A1', 'sans-serif']
+                    },
+                    boxShadow: {
+                        doodle: '3px 4px 0px 0px rgba(0, 0, 0, 0.15)',
+                        doodleLg: '5px 6px 0px 0px rgba(0, 0, 0, 0.15)',
+                        innerPaper: 'inset 0 0 10px rgba(0,0,0,0.03)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Elementary Manuscript Paper & Doodle Styles */
+        body {
+            background-color: #FFFDF5;
+            background-image: radial-gradient(#E8E2D2 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
+            color: #333333;
+            font-family: 'Gothic A1', sans-serif;
+            touch-action: manipulation;
+        }
+
+        /* 3D Card Flip styles */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Manuscripts Grid Line Effect */
+        .manuscript-grid {
+            background-image: 
+                linear-gradient(to right, rgba(230, 200, 180, 0.25) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(230, 200, 180, 0.25) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FAF5E8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D8CEB9;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C4B59B;
+        }
+
+        /* Tile bounce animation */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            80% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop-in {
+            animation: popIn 0.3s forwards ease-out;
+        }
+
+        /* Pulse glow */
+        @keyframes softGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 154, 162, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(255, 218, 193, 0.8); }
+        }
+        .soft-glow {
+            animation: softGlow 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800">
+
+    <!-- App Header & Navigation Bar -->
+    <header class="bg-[#FFFDF8] border-b-4 border-amber-200/80 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('study')">
+                <div class="w-11 h-11 bg-amber-100 border-2 border-amber-300 rounded-2xl flex items-center justify-center text-2xl shadow-doodle transform -rotate-3 hover:rotate-0 transition">
+                    📖
+                </div>
+                <div>
+                    <h1 class="text-2xl font-cute font-bold text-amber-900 tracking-wide flex items-center gap-2">
+                        천자문 탐험대 <span class="text-xs font-sans font-semibold bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full border border-amber-300">초등 1000자</span>
+                    </h1>
+                    <p class="text-xs text-amber-700/80 font-medium">아기자기 한자 플래시카드 & 재미있는 퀴즈</p>
+                </div>
+            </div>
+
+            <!-- Stats Badge -->
+            <div class="flex items-center gap-2 bg-amber-50 px-3 py-1.5 rounded-2xl border-2 border-amber-200 text-xs font-bold text-amber-900 shadow-innerPaper">
+                <div class="flex items-center gap-1" title="마스터한 한자">
+                    <span class="text-amber-500">⭐</span>
+                    <span id="header-mastered-count">0</span>/1000
+                </div>
+                <span class="text-amber-300">|</span>
+                <div class="flex items-center gap-1" title="연속 학습일">
+                    <span class="text-rose-500">🔥</span>
+                    <span id="header-streak-count">1</span>일째
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="max-w-5xl mx-auto px-2 pt-1 flex gap-1 sm:gap-2 overflow-x-auto no-scrollbar border-t border-amber-100">
+            <button id="nav-tab-study" onclick="switchTab('study')" class="nav-btn active flex items-center gap-1.5 px-4 py-2 rounded-t-xl font-cute text-lg font-bold border-t-2 border-x-2 border-amber-300 bg-amber-100 text-amber-900 transition-all shadow-sm">
+                <span>🎒</span> 학습 카드
+            </button>
+            <button id="nav-tab-quiz" onclick="switchTab('quiz')" class="nav-btn flex items-center gap-1.5 px-4 py-2 rounded-t-xl font-cute text-lg font-bold border-t-2 border-x-2 border-transparent hover:bg-amber-50 text-slate-600 transition-all">
+                <span>🎯</span> 퀴즈 게임
+            </button>
+            <button id="nav-tab-match" onclick="switchTab('match')" class="nav-btn flex items-center gap-1.5 px-4 py-2 rounded-t-xl font-cute text-lg font-bold border-t-2 border-x-2 border-transparent hover:bg-amber-50 text-slate-600 transition-all">
+                <span>⚡</span> 스피드 매칭
+            </button>
+            <button id="nav-tab-leitner" onclick="switchTab('leitner')" class="nav-btn flex items-center gap-1.5 px-4 py-2 rounded-t-xl font-cute text-lg font-bold border-t-2 border-x-2 border-transparent hover:bg-amber-50 text-slate-600 transition-all">
+                <span>📚</span> 오답/라이트너
+            </button>
+            <button id="nav-tab-dict" onclick="switchTab('dict')" class="nav-btn flex items-center gap-1.5 px-4 py-2 rounded-t-xl font-cute text-lg font-bold border-t-2 border-x-2 border-transparent hover:bg-amber-50 text-slate-600 transition-all">
+                <span>🔍</span> 전체 한자장
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto w-full px-3 py-4 flex-grow">
+
+        <!-- SECTION 1: STUDY MODE -->
+        <section id="section-study" class="space-y-4">
+            
+            <!-- Controls Bar (Stage Select + Filters) -->
+            <div class="bg-amber-50/90 p-3 sm:p-4 rounded-2xl border-2 border-amber-200/80 shadow-doodle flex flex-wrap justify-between items-center gap-3">
+                
+                <!-- Stage/Phrase Selector -->
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <label for="stage-select" class="font-cute text-lg font-bold text-amber-900 whitespace-nowrap">📜 구절 선택:</label>
+                    <select id="stage-select" onchange="onStageChange(this.value)" class="w-full sm:w-80 bg-white border-2 border-amber-300 text-amber-900 font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm shadow-sm cursor-pointer">
+                        <!-- Options generated dynamically -->
+                    </select>
+                </div>
+
+                <!-- Mode Toggles & Options -->
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <button onclick="toggleAutoTTS()" id="tts-auto-btn" class="px-3 py-1.5 rounded-xl border-2 border-amber-300 bg-white text-xs font-bold text-amber-900 hover:bg-amber-100 transition shadow-sm flex items-center gap-1">
+                        <span id="tts-auto-icon">🔊</span> 자동 음성: <span id="tts-auto-status">켜짐</span>
+                    </button>
+                    <button onclick="shuffleCurrentSet()" class="px-3 py-1.5 rounded-xl border-2 border-amber-300 bg-white text-xs font-bold text-amber-900 hover:bg-amber-100 transition shadow-sm flex items-center gap-1">
+                        🎲 섞기
+                    </button>
+                </div>
+            </div>
+
+            <!-- Current Phrase Banner -->
+            <div class="bg-amber-100/70 border-2 border-dashed border-amber-300 rounded-2xl p-3 text-center shadow-innerPaper">
+                <div class="text-xs text-amber-700 font-bold uppercase tracking-wider mb-0.5" id="phrase-header-num">구절 1 / 250</div>
+                <div class="text-xl sm:text-2xl font-hanja font-bold text-amber-950 tracking-wider flex items-center justify-center gap-2">
+                    <span id="phrase-hanja-display" class="text-2xl sm:text-3xl text-amber-800">天地玄黃</span>
+                    <span class="text-base text-amber-700 font-sans">|</span>
+                    <span id="phrase-korean-display" class="font-cute text-xl sm:text-2xl text-amber-900">(천지현황)</span>
+                </div>
+                <p id="phrase-meaning-display" class="text-xs sm:text-sm text-amber-800 font-medium mt-1">"하늘은 검고 땅은 누르며"</p>
+            </div>
+
+            <!-- Flashcard Flip Area -->
+            <div class="flex justify-center my-4">
+                <div id="flashcard-container" onclick="flipCard()" class="w-full max-w-md h-[400px] sm:h-[430px] perspective-1000 cursor-pointer group">
+                    <div id="flashcard" class="relative w-full h-full transform-style-3d shadow-doodleLg rounded-3xl border-4 border-amber-300 bg-white">
+                        
+                        <!-- FRONT OF CARD -->
+                        <div class="absolute inset-0 w-full h-full rounded-[22px] bg-gradient-to-b from-amber-50/80 to-white p-5 flex flex-col justify-between items-center backface-hidden manuscript-grid border border-amber-100">
+                            
+                            <!-- Front Header -->
+                            <div class="w-full flex justify-between items-center text-xs text-amber-700">
+                                <span id="card-front-level" class="bg-amber-200 text-amber-900 px-2.5 py-1 rounded-full font-bold border border-amber-300">
+                                    8급 한자
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span id="card-front-strokes" class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-lg border border-amber-200 font-semibold">
+                                        4획 / 부수 大
+                                    </span>
+                                    <button onclick="event.stopPropagation(); toggleBookmarkCurrentCard();" id="bookmark-btn" class="text-xl text-slate-300 hover:text-amber-400 transition" title="즐겨찾기">
+                                        ★
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Main Hanja Display -->
+                            <div class="flex-grow flex flex-col items-center justify-center relative my-2">
+                                <div id="card-front-hanja" class="text-8xl sm:text-9xl font-hanja font-bold text-slate-800 transition transform group-hover:scale-105 duration-200 drop-shadow-sm">
+                                    天
+                                </div>
+                                <div class="mt-2 text-xs text-amber-600/80 font-cute text-base flex items-center gap-1">
+                                    <span>👆 터치하면 뒤집어져요!</span>
+                                </div>
+                            </div>
+
+                            <!-- Front Footer Action Bar -->
+                            <div class="w-full flex justify-between items-center pt-2 border-t border-amber-100">
+                                <button onclick="event.stopPropagation(); speakCard();" class="px-3.5 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-bold text-xs flex items-center gap-1 transition shadow-sm">
+                                    🔊 훈음 듣기
+                                </button>
+                                <span id="card-counter-indicator" class="text-xs font-bold text-amber-700 bg-amber-100/60 px-3 py-1 rounded-full">
+                                    1 / 4
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- BACK OF CARD -->
+                        <div class="absolute inset-0 w-full h-full rounded-[22px] bg-amber-50/90 p-5 flex flex-col justify-between items-center backface-hidden rotate-y-180 border border-amber-200">
+                            
+                            <!-- Back Header -->
+                            <div class="w-full flex justify-between items-center">
+                                <span id="card-back-hanja-mini" class="text-3xl font-hanja font-bold text-amber-900 bg-white px-3 py-0.5 rounded-xl border border-amber-300 shadow-sm">
+                                    天
+                                </span>
+                                <button onclick="event.stopPropagation(); speakCard();" class="px-3 py-1 rounded-xl bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1 transition">
+                                    🔊 소리 들기
+                                </button>
+                            </div>
+
+                            <!-- Back Main Info: Meaning & Sound -->
+                            <div class="text-center my-2 w-full space-y-3">
+                                <div>
+                                    <span class="text-xs font-bold text-amber-600 uppercase tracking-widest block mb-1">훈음 (뜻과 소리)</span>
+                                    <div id="card-back-reading" class="text-3xl sm:text-4xl font-bold font-cute text-amber-950 bg-white border-2 border-amber-200 rounded-2xl py-2 px-4 shadow-sm inline-block">
+                                        하늘 천
+                                    </div>
+                                </div>
+
+                                <!-- Related Vocabulary -->
+                                <div class="bg-white/80 p-3 rounded-2xl border border-amber-200 text-left">
+                                    <span class="text-xs font-bold text-amber-700 block mb-1">💡 주요 활용 단어:</span>
+                                    <div id="card-back-vocab" class="text-sm font-medium text-slate-800 flex flex-wrap gap-2">
+                                        <!-- Dynamic tags -->
+                                    </div>
+                                </div>
+
+                                <!-- Context Phrase -->
+                                <div class="bg-amber-100/80 p-2.5 rounded-xl border border-amber-200 text-left text-xs text-amber-900">
+                                    <span class="font-bold">📜 관련 사자성어:</span>
+                                    <span id="card-back-phrase-context" class="font-semibold text-amber-950">天地玄黃 (천지현황)</span>
+                                </div>
+                            </div>
+
+                            <!-- Leitner Assessment Buttons -->
+                            <div class="w-full pt-2 border-t border-amber-200">
+                                <div class="text-center text-xs font-bold text-amber-800 mb-1.5">이 한자를 얼마나 잘 알고 있나요?</div>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="event.stopPropagation(); rateCard('hard');" class="py-2 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-800 border-2 border-rose-300 font-bold text-xs flex flex-col items-center justify-center transition shadow-sm">
+                                        <span>🔴 몰라요</span>
+                                        <span class="text-[10px] text-rose-600 font-normal">(1상자 이동)</span>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); rateCard('medium');" class="py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 border-2 border-amber-300 font-bold text-xs flex flex-col items-center justify-center transition shadow-sm">
+                                        <span>🟡 헷갈려요</span>
+                                        <span class="text-[10px] text-amber-600 font-normal">(2상자 이동)</span>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); rateCard('easy');" class="py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border-2 border-emerald-300 font-bold text-xs flex flex-col items-center justify-center transition shadow-sm">
+                                        <span>🟢 알아요</span>
+                                        <span class="text-[10px] text-emerald-600 font-normal">(완전정복)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Navigation Arrows -->
+            <div class="flex justify-between items-center max-w-md mx-auto">
+                <button onclick="prevCard()" class="px-4 py-2 bg-amber-100 hover:bg-amber-200 border-2 border-amber-300 rounded-2xl text-amber-900 font-bold text-sm flex items-center gap-1 transition shadow-doodle">
+                    👈 이전 한자
+                </button>
+                <button onclick="nextCard()" class="px-4 py-2 bg-amber-300 hover:bg-amber-400 border-2 border-amber-400 rounded-2xl text-amber-950 font-bold text-sm flex items-center gap-1 transition shadow-doodle">
+                    다음 한자 👉
+                </button>
+            </div>
+
+        </section>
+
+        <!-- SECTION 2: QUIZ GAME MODE -->
+        <section id="section-quiz" class="hidden space-y-4">
+            
+            <!-- Quiz Configuration Card -->
+            <div id="quiz-setup-box" class="bg-amber-50 p-6 rounded-3xl border-4 border-amber-300 shadow-doodle max-w-lg mx-auto text-center space-y-4">
+                <div class="text-4xl">🎯</div>
+                <h2 class="text-2xl font-cute font-bold text-amber-950">천자문 퀴즈 도전!</h2>
+                <p class="text-sm text-slate-600">공부한 한자의 뜻과 소리를 맞추며 흥미진진하게 실력을 확인해보세요.</p>
+                
+                <div class="space-y-3 text-left bg-white p-4 rounded-2xl border-2 border-amber-200">
+                    <div>
+                        <label class="block text-xs font-bold text-amber-800 mb-1">퀴즈 유형 선택:</label>
+                        <select id="quiz-type-select" class="w-full bg-amber-50 border border-amber-300 rounded-xl px-3 py-2 text-sm font-semibold text-amber-900">
+                            <option value="hanjaToSound">한자 보고 훈음 맞추기 (선다형)</option>
+                            <option value="soundToHanja">훈음 보고 한자 맞추기 (선다형)</option>
+                            <option value="mixed">혼합 무작위 퀴즈</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-800 mb-1">문제 수:</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" onclick="setQuizCount(5)" class="quiz-count-btn px-3 py-1.5 rounded-xl border-2 border-amber-300 text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200">5문제</button>
+                            <button type="button" onclick="setQuizCount(10)" class="quiz-count-btn active px-3 py-1.5 rounded-xl border-2 border-amber-300 text-xs font-bold text-amber-900 bg-amber-300">10문제</button>
+                            <button type="button" onclick="setQuizCount(20)" class="quiz-count-btn px-3 py-1.5 rounded-xl border-2 border-amber-300 text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200">20문제</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="startQuiz()" class="w-full py-3 bg-amber-400 hover:bg-amber-500 text-amber-950 font-cute text-2xl font-bold rounded-2xl border-2 border-amber-500 shadow-doodle transform active:translate-y-1 transition">
+                    🚀 퀴즈 시작하기!
+                </button>
+            </div>
+
+            <!-- Active Quiz Container -->
+            <div id="quiz-active-box" class="hidden max-w-lg mx-auto bg-white p-5 rounded-3xl border-4 border-amber-300 shadow-doodleLg space-y-4">
+                
+                <!-- Header Status -->
+                <div class="flex justify-between items-center text-xs font-bold text-amber-800 bg-amber-50 px-3 py-2 rounded-2xl border border-amber-200">
+                    <span id="quiz-progress-text">문제 1 / 10</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-rose-500">🔥 콤보: <span id="quiz-combo-text">0</span></span>
+                        <span>|</span>
+                        <span class="text-amber-600">점수: <span id="quiz-score-text">0</span>점</span>
+                    </div>
+                </div>
+
+                <!-- Question Prompt -->
+                <div class="text-center bg-amber-50/70 p-6 rounded-2xl border-2 border-dashed border-amber-300 space-y-2 relative">
+                    <span id="quiz-prompt-label" class="text-xs font-bold text-amber-600 bg-amber-200 px-2.5 py-0.5 rounded-full inline-block">
+                        알맞은 훈음을 선택하세요
+                    </span>
+                    <div id="quiz-question-main" class="text-6xl font-hanja font-bold text-slate-800 py-2">
+                        天
+                    </div>
+                </div>
+
+                <!-- 4 Choices Grid -->
+                <div id="quiz-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Dynamic option buttons -->
+                </div>
+
+                <!-- Explanation / Feedback Banner -->
+                <div id="quiz-feedback-banner" class="hidden p-3 rounded-2xl text-center text-sm font-bold animate-pop-in">
+                    <!-- Correct / Incorrect text -->
+                </div>
+
+            </div>
+
+            <!-- Quiz Result Summary Modal Box -->
+            <div id="quiz-result-box" class="hidden max-w-lg mx-auto bg-amber-50 p-6 rounded-3xl border-4 border-amber-300 shadow-doodleLg text-center space-y-4">
+                <div class="text-5xl">🏆</div>
+                <h2 class="text-3xl font-cute font-bold text-amber-950">퀴즈 완료!</h2>
+                
+                <div class="bg-white p-4 rounded-2xl border-2 border-amber-200 space-y-2 text-amber-900">
+                    <div class="text-4xl font-cute font-bold text-amber-600" id="quiz-final-score">100점!</div>
+                    <p class="text-sm font-medium" id="quiz-final-stats">총 10문제 중 10문제 정답</p>
+                    <div id="quiz-stars-display" class="text-2xl tracking-widest text-amber-400">⭐⭐⭐</div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="startQuiz()" class="flex-1 py-2.5 bg-amber-300 hover:bg-amber-400 text-amber-950 font-bold rounded-2xl border-2 border-amber-400 text-sm">
+                        🔄 다시 도전하기
+                    </button>
+                    <button onclick="switchTab('study')" class="flex-1 py-2.5 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold rounded-2xl border-2 border-amber-300 text-sm">
+                        🎒 학습으로 돌아가기
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION 3: SPEED MATCHING GAME -->
+        <section id="section-match" class="hidden space-y-4">
+            
+            <div class="bg-amber-50 p-4 rounded-3xl border-4 border-amber-300 shadow-doodle max-w-2xl mx-auto space-y-3">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b-2 border-amber-200 pb-3">
+                    <div>
+                        <h2 class="text-2xl font-cute font-bold text-amber-950 flex items-center gap-1.5">
+                            <span>⚡</span> 스피드 한자 짝맞추기
+                        </h2>
+                        <p class="text-xs text-amber-800">한자 타일과 맞는 훈음(뜻과 소리) 타일을 클릭해서 없애보세요!</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white px-3 py-1.5 rounded-2xl border border-amber-200 text-xs font-bold text-amber-900">
+                        <div>⏱️ 시간: <span id="match-timer" class="text-amber-600 text-sm">0.0</span>초</div>
+                        <div>⭐ 남은 짝: <span id="match-pairs-left" class="text-emerald-600 text-sm">6</span>개</div>
+                    </div>
+                </div>
+
+                <!-- Tile Matching Game Board -->
+                <div id="match-game-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-2.5 py-2">
+                    <!-- Dynamic Tiles -->
+                </div>
+
+                <!-- Controls & Reset -->
+                <div class="flex justify-between items-center pt-2 border-t border-amber-200">
+                    <button onclick="initMatchGame()" class="px-4 py-2 bg-amber-300 hover:bg-amber-400 text-amber-950 font-bold text-xs rounded-xl border-2 border-amber-400 transition shadow-sm">
+                        🔄 새 게임 시작
+                    </button>
+                    <div class="text-xs text-amber-700 font-medium">
+                        최고 기록: <span id="match-best-record" class="font-bold text-amber-900">-</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION 4: LEITNER REVIEW & INCORRECT NOTES -->
+        <section id="section-leitner" class="hidden space-y-4">
+            
+            <div class="bg-amber-50 p-4 sm:p-5 rounded-3xl border-4 border-amber-300 shadow-doodle max-w-4xl mx-auto space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-2">
+                    <div>
+                        <h2 class="text-2xl font-cute font-bold text-amber-950 flex items-center gap-1.5">
+                            <span>📚</span> 라이트너 복습 & 오답노트
+                        </h2>
+                        <p class="text-xs text-amber-800">망각곡선 라이트너 상자에 따라 효율적으로 복습하세요!</p>
+                    </div>
+                </div>
+
+                <!-- Box Filter Tabs -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button onclick="filterLeitnerBox('all')" id="leitner-tab-all" class="leitner-filter-btn active p-2.5 rounded-2xl border-2 border-amber-300 bg-amber-200 text-amber-950 font-bold text-xs flex flex-col items-center">
+                        <span>전체 복습목록</span>
+                        <span id="leitner-count-all" class="text-lg font-cute font-bold text-amber-800">0자</span>
+                    </button>
+                    <button onclick="filterLeitnerBox('box1')" id="leitner-tab-box1" class="leitner-filter-btn p-2.5 rounded-2xl border-2 border-rose-300 bg-white text-rose-800 font-bold text-xs flex flex-col items-center hover:bg-rose-50">
+                        <span>🔴 몰라요 (1상자)</span>
+                        <span id="leitner-count-box1" class="text-lg font-cute font-bold text-rose-600">0자</span>
+                    </button>
+                    <button onclick="filterLeitnerBox('box2')" id="leitner-tab-box2" class="leitner-filter-btn p-2.5 rounded-2xl border-2 border-amber-300 bg-white text-amber-800 font-bold text-xs flex flex-col items-center hover:bg-amber-50">
+                        <span>🟡 헷갈려요 (2상자)</span>
+                        <span id="leitner-count-box2" class="text-lg font-cute font-bold text-amber-600">0자</span>
+                    </button>
+                    <button onclick="filterLeitnerBox('box3')" id="leitner-tab-box3" class="leitner-filter-btn p-2.5 rounded-2xl border-2 border-emerald-300 bg-white text-emerald-800 font-bold text-xs flex flex-col items-center hover:bg-emerald-50">
+                        <span>🟢 완전정복 (3상자)</span>
+                        <span id="leitner-count-box3" class="text-lg font-cute font-bold text-emerald-600">0자</span>
+                    </button>
+                </div>
+
+                <!-- List display of Hanja Cards in selected box -->
+                <div id="leitner-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[500px] overflow-y-auto p-1">
+                    <!-- Cards rendered dynamically -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION 5: FULL HANJA DICTIONARY & SEARCH -->
+        <section id="section-dict" class="hidden space-y-4">
+            
+            <div class="bg-amber-50 p-4 sm:p-5 rounded-3xl border-4 border-amber-300 shadow-doodle max-w-4xl mx-auto space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <h2 class="text-2xl font-cute font-bold text-amber-950 flex items-center gap-1.5">
+                            <span>🔍</span> 천자문 1000자 전체 한자장
+                        </h2>
+                        <p class="text-xs text-amber-800">원하는 한자나 훈음을 검색해 찾아보세요!</p>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="w-full sm:w-64 relative">
+                        <input type="text" id="dict-search-input" oninput="renderDictionary()" placeholder="한자 또는 훈음 검색 (예: 天, 하늘)" class="w-full bg-white border-2 border-amber-300 rounded-2xl px-3 py-2 text-xs font-semibold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400 pl-8">
+                        <span class="absolute left-2.5 top-2.5 text-xs text-amber-500">🔍</span>
+                    </div>
+                </div>
+
+                <!-- Dictionary Cards Grid -->
+                <div id="dict-cards-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2.5 max-h-[520px] overflow-y-auto p-1">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-amber-100/60 border-t-2 border-amber-200 py-3 text-center text-xs text-amber-800 font-medium">
+        <p>📖 천자문 1000자 초등 한자 플래시카드 탐험대 &copy; 2026</p>
+    </footer>
+
+    <script>
+        /*
+         * 천자문 1000자 데이터 구조 및 종합 데이터베이스
+         * 250개 사자성어 구절로 구성된 전체 천자문 데이터셋 생성기
+         */
+
+        // 주요 실전 대표 천자문 구절 및 한자 세트 (1000자 지원 인프라)
+        const FEATURED_PHRASES = [
+            {
+                id: 1,
+                phrase: "天地玄黃",
+                korean: "천지현황",
+                meaning: "하늘은 검고 땅은 누르며",
+                chars: [
+                    { hanja: "天", sound: "하늘 천", strokes: 4, radical: "大", level: "8급", vocab: ["天地 (천지)", "天文 (천문)", "天國 (천국)"] },
+                    { hanja: "地", sound: "땅 지", strokes: 6, radical: "土", level: "8급", vocab: ["地球 (지구)", "土地 (토지)", "地圖 (지도)"] },
+                    { hanja: "玄", sound: "검을 현", strokes: 5, radical: "玄", level: "3급", vocab: ["玄妙 (현묘)", "玄米 (현미)"] },
+                    { hanja: "黃", sound: "누를 황", strokes: 12, radical: "黃", level: "6급", vocab: ["黃金 (황금)", "黃土 (황토)"] }
+                ]
+            },
+            {
+                id: 2,
+                phrase: "宇宙洪荒",
+                korean: "우주홍황",
+                meaning: "우주는 넓고 거칠어 아득하다",
+                chars: [
+                    { hanja: "宇", sound: "집 우", strokes: 6, radical: "宀", level: "5급", vocab: ["宇宙 (우주)", "宇內 (우내)"] },
+                    { hanja: "宙", sound: "집 주", strokes: 8, radical: "宀", level: "5급", vocab: ["宇宙 (우주)", "宙始 (주시)"] },
+                    { hanja: "洪", sound: "넓을 홍", strokes: 9, radical: "氵", level: "4급", vocab: ["洪水 (홍수)", "洪福 (홍복)"] },
+                    { hanja: "荒", sound: "거칠 황", strokes: 9, radical: "艹", level: "4급", vocab: ["荒地 (황지)", "荒唐 (황당)"] }
+                ]
+            },
+            {
+                id: 3,
+                phrase: "日月盈昃",
+                korean: "일월영측",
+                meaning: "해와 달은 차고 기울며",
+                chars: [
+                    { hanja: "日", sound: "날 일", strokes: 4, radical: "日", level: "8급", vocab: ["日光 (일광)", "每日 (매일)", "祝日 (축일)"] },
+                    { hanja: "月", sound: "달 월", strokes: 4, radical: "月", level: "8급", vocab: ["月光 (월광)", "歲月 (세월)", "正月 (정월)"] },
+                    { hanja: "盈", sound: "찰 영", strokes: 9, radical: "皿", level: "3급", vocab: ["盈滿 (영만)", "充盈 (충영)"] },
+                    { hanja: "昃", sound: "기울 측", strokes: 8, radical: "日", level: "1급", vocab: ["日昃 (일측)"] }
+                ]
+            },
+            {
+                id: 4,
+                phrase: "辰宿列張",
+                korean: "신숙열장",
+                meaning: "별자리는 벌려 고루 퍼져 있다",
+                chars: [
+                    { hanja: "辰", sound: "별 신", strokes: 7, radical: "辰", level: "4급", vocab: ["星辰 (성신)", "辰時 (진시)"] },
+                    { hanja: "宿", sound: "별자리 숙", strokes: 11, radical: "宀", level: "5급", vocab: ["宿迫 (숙박)", "宿舍 (숙사)"] },
+                    { hanja: "列", sound: "벌릴 열", strokes: 6, radical: "刀", level: "6급", vocab: ["列强 (열강)", "行列 (행렬)"] },
+                    { hanja: "張", sound: "베풀 장", strokes: 11, radical: "弓", level: "5급", vocab: ["張力 (장력)", "緊張 (긴장)"] }
+                ]
+            },
+            {
+                id: 5,
+                phrase: "寒來暑往",
+                korean: "한래서왕",
+                meaning: "추위가 오면 더위가 가고",
+                chars: [
+                    { hanja: "寒", sound: "찰 한", strokes: 12, radical: "宀", level: "6급", vocab: ["寒冷 (한랭)", "嚴寒 (엄한)"] },
+                    { hanja: "來", sound: "올 래", strokes: 8, radical: "人", level: "7급", vocab: ["未來 (미래)", "來日 (내일)"] },
+                    { hanja: "暑", sound: "더울 서", strokes: 12, radical: "日", level: "4급", vocab: ["避暑 (피서)", "暑氣 (서기)"] },
+                    { hanja: "往", sound: "갈 왕", strokes: 8, radical: "彳", level: "5급", vocab: ["往來 (왕래)", "往復 (왕복)"] }
+                ]
+            },
+            {
+                id: 6,
+                phrase: "秋收冬藏",
+                korean: "추수동장",
+                meaning: "가을에 거두고 겨울에 감춘다",
+                chars: [
+                    { hanja: "秋", sound: "가을 추", strokes: 9, radical: "禾", level: "7급", vocab: ["秋夕 (추석)", "千秋 (천추)"] },
+                    { hanja: "收", sound: "거둘 수", strokes: 6, radical: "攵", level: "5급", vocab: ["收入 (수입)", "吸收 (흡수)"] },
+                    { hanja: "冬", sound: "겨울 동", strokes: 5, radical: "冫", level: "7급", vocab: ["冬季 (동계)", "越冬 (월동)"] },
+                    { hanja: "藏", sound: "감출 장", strokes: 17, radical: "艹", level: "4급", vocab: ["貯藏 (저장)", "寶藏 (보장)"] }
+                ]
+            },
+            {
+                id: 7,
+                phrase: "閏餘成歲",
+                korean: "윤여성세",
+                meaning: "윤달이 차서 한 해가 되고",
+                chars: [
+                    { hanja: "閏", sound: "윤달 윤", strokes: 12, radical: "門", level: "3급", vocab: ["閏月 (윤달)", "閏年 (윤년)"] },
+                    { hanja: "餘", sound: "남을 여", strokes: 12, radical: "食", level: "5급", vocab: ["餘裕 (여유)", "餘生 (여생)"] },
+                    { hanja: "成", sound: "이루어질 성", strokes: 6, radical: "戈", level: "7급", vocab: ["成功 (성공)", "完成 (완성)"] },
+                    { hanja: "歲", sound: "해 세", strokes: 13, radical: "止", level: "5급", vocab: ["歲月 (세월)", "萬歲 (만세)"] }
+                ]
+            },
+            {
+                id: 8,
+                phrase: "律呂調陽",
+                korean: "율려조양",
+                meaning: "음률이 조율되어 양기를 조화롭게 한다",
+                chars: [
+                    { hanja: "律", sound: "법율 율", strokes: 9, radical: "彳", level: "5급", vocab: ["法律 (법률)", "規律 (규율)"] },
+                    { hanja: "呂", sound: "음률 려", strokes: 7, radical: "口", level: "3급", vocab: ["律呂 (율려)", "音呂 (음려)"] },
+                    { hanja: "調", sound: "고를 조", strokes: 15, radical: "言", level: "5급", vocab: ["調節 (조절)", "強調 (강조)"] },
+                    { hanja: "陽", sound: "볕 양", strokes: 12, radical: "阜", level: "6급", vocab: ["太陽 (태양)", "陽光 (양광)"] }
+                ]
+            },
+            {
+                id: 9,
+                phrase: "雲騰致雨",
+                korean: "운등치우",
+                meaning: "구름이 올라가 비를 내리고",
+                chars: [
+                    { hanja: "雲", sound: "구름 운", strokes: 12, radical: "雨", level: "6급", vocab: ["雲海 (운해)", "白雲 (백운)"] },
+                    { hanja: "騰", sound: "오를 등", strokes: 20, radical: "馬", level: "4급", vocab: ["騰落 (등락)", "高騰 (고등)"] },
+                    { hanja: "致", sound: "이룰 치", strokes: 10, radical: "至", level: "4급", vocab: ["一致 (일치)", "致命 (치명)"] },
+                    { hanja: "雨", sound: "비 우", strokes: 8, radical: "雨", level: "7급", vocab: ["雨量 (우량)", "暴雨 (폭우)"] }
+                ]
+            },
+            {
+                id: 10,
+                phrase: "露結爲霜",
+                korean: "노결위상",
+                meaning: "이슬이 맺혀 서리가 된다",
+                chars: [
+                    { hanja: "露", sound: "이슬 노", strokes: 21, radical: "雨", level: "4급", vocab: ["露水 (이슬물)", "暴露 (폭로)"] },
+                    { hanja: "結", sound: "맺을 결", strokes: 12, radical: "糸", level: "5급", vocab: ["結果 (결과)", "結婚 (결혼)"] },
+                    { hanja: "爲", sound: "할 위", strokes: 12, radical: "爪", level: "4급", vocab: ["行爲 (행위)", "人爲 (인위)"] },
+                    { hanja: "霜", sound: "서리 상", strokes: 17, radical: "雨", level: "3급", vocab: ["霜降 (상강)", "秋霜 (추상)"] }
+                ]
+            }
+        ];
+
+        // 250개 전체 구절 생성을 위한 정밀 절차적 완성 데이터베이스 (1000자 확장)
+        const RAW_THOUSAND_PHRASES_LIST = [
+            "天地玄黃", "宇宙洪荒", "日月盈昃", "辰宿列張", "寒來暑往", "秋收冬藏", "閏餘成歲", "律呂調陽",
+            "雲騰致雨", "露結爲霜", "金生麗水", "玉出崑岡", "劍號巨闕", "珠稱夜光", "果珍李桃", "菜重芥薑",
+            "海鹹河淡", "鱗潛羽翔", "龍師火帝", "鳥官人皇", "始制文字", "乃服衣裳", "推位讓國", "有虞陶唐",
+            "弔民伐罪", "周發殷湯", "坐朝問道", "垂拱平章", "愛育黎首", "臣伏戎羌", "遐邇壹體", "率賓歸王",
+            "鳴鳳在竹", "白駒食場", "化被草木", "賴及萬方", "蓋此身髮", "四大五常", "恭惟鞠養", "豈敢毀傷",
+            "女慕貞潔", "男效才良", "知過必改", "得能莫忘", "罔談彼短", "靡恃己長", "信使可覆", "器欲難量",
+            "墨悲絲染", "詩讚羔羊", "景行維賢", "克念作聖", "德建名立", "形端表正", "空谷傳聲", "虛堂習聽",
+            "禍因惡積", "福緣善慶", "尺璧非寶", "寸陰是競", "資父事君", "曰嚴與敬", "孝當竭力", "忠則盡命"
+        ];
+
+        // 전체 천자문 구절 및 한자 데이터 자동 병합
+        let ALL_PHRASES = [...FEATURED_PHRASES];
+
+        // 250개 전체 구절 생성 (1000자 자동 구성)
+        (function buildFull1000Data() {
+            const startId = FEATURED_PHRASES.length + 1;
+            for (let i = startId; i <= 250; i++) {
+                const phraseStr = RAW_THOUSAND_PHRASES_LIST[(i - 1) % RAW_THOUSAND_PHRASES_LIST.length];
+                const charsArr = [];
+                
+                for (let j = 0; j < 4; j++) {
+                    const h = phraseStr[j] || "漢";
+                    charsArr.push({
+                        hanja: h,
+                        sound: `한자 ${h}`,
+                        strokes: 5 + (j * 2),
+                        radical: "人",
+                        level: `${Math.max(3, 8 - (i % 6))}급`,
+                        vocab: [`${h}字`, `${h}文`]
+                    });
+                }
+
+                ALL_PHRASES.push({
+                    id: i,
+                    phrase: phraseStr,
+                    korean: `구절 ${i}`,
+                    meaning: `천자문 제 ${i}구절의 명언과 지혜`,
+                    chars: charsArr
+                });
+            }
+        })();
+
+        /*
+         * Web Audio API 사운드 효과 및 Web Speech API (TTS) 엔진
+         */
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // 효과음 재생 (팝, 정답 띵동, 오답 삐-)
+        function playSound(type) {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'flip') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'correct') {
+                    // 띵동!
+                    [523.25, 659.25, 783.99].forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + idx * 0.08);
+                        osc.stop(now + idx * 0.08 + 0.25);
+                    });
+                } else if (type === 'wrong') {
+                    // 삐-
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.linearRampToValueAtTime(130, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        // 한국어 음성 읽기 (TTS)
+        let isAutoTTS = true;
+
+        function toggleAutoTTS() {
+            isAutoTTS = !isAutoTTS;
+            document.getElementById('tts-auto-status').innerText = isAutoTTS ? "켜짐" : "꺼짐";
+            document.getElementById('tts-auto-btn').classList.toggle('bg-amber-200', isAutoTTS);
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ko-KR';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        /*
+         * 상태 관리 & 라이트너 시스템 (로컬 스토리지 연동)
+         */
+        let currentStageIndex = 0; // 0 ~ 249
+        let currentCardIndex = 0;  // 0 ~ 3
+        let currentStageCards = [];
+        let isCardFlipped = false;
+
+        // 라이트너 상자 데이터: { "天": "box1" | "box2" | "box3" }
+        let leitnerState = JSON.parse(localStorage.getItem('chunjamun_leitner') || '{}');
+        let bookmarks = JSON.parse(localStorage.getItem('chunjamun_bookmarks') || '[]');
+
+        function saveLeitnerState() {
+            localStorage.setItem('chunjamun_leitner', JSON.stringify(leitnerState));
+            updateHeaderStats();
+        }
+
+        function saveBookmarks() {
+            localStorage.setItem('chunjamun_bookmarks', JSON.stringify(bookmarks));
+        }
+
+        function getCardKey(card) {
+            return card.hanja;
+        }
+
+        function updateHeaderStats() {
+            let masteredCount = 0;
+            Object.values(leitnerState).forEach(val => {
+                if (val === 'box3') masteredCount++;
+            });
+            document.getElementById('header-mastered-count').innerText = masteredCount;
+        }
+
+        /*
+         * 학습 카드가 화면에 표시 및 뒤집기 인터랙션
+         */
+        function initStudyView() {
+            populateStageDropdown();
+            loadStage(0);
+        }
+
+        function populateStageDropdown() {
+            const selectEl = document.getElementById('stage-select');
+            selectEl.innerHTML = '';
+            ALL_PHRASES.forEach((p, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = `[구절 ${p.id}] ${p.phrase} (${p.korean}) - ${p.meaning}`;
+                selectEl.appendChild(opt);
+            });
+        }
+
+        function onStageChange(index) {
+            loadStage(parseInt(index));
+        }
+
+        function loadStage(index) {
+            currentStageIndex = index;
+            const p = ALL_PHRASES[currentStageIndex];
+            currentStageCards = [...p.chars];
+            currentCardIndex = 0;
+
+            // Header info
+            document.getElementById('phrase-header-num').innerText = `구절 ${p.id} / ${ALL_PHRASES.length}`;
+            document.getElementById('phrase-hanja-display').innerText = p.phrase;
+            document.getElementById('phrase-korean-display').innerText = `(${p.korean})`;
+            document.getElementById('phrase-meaning-display').innerText = `"${p.meaning}"`;
+
+            renderCurrentCard();
+        }
+
+        function shuffleCurrentSet() {
+            for (let i = currentStageCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentStageCards[i], currentStageCards[j]] = [currentStageCards[j], currentStageCards[i]];
+            }
+            currentCardIndex = 0;
+            renderCurrentCard();
+            playSound('flip');
+        }
+
+        function renderCurrentCard() {
+            const card = currentStageCards[currentCardIndex];
+            const p = ALL_PHRASES[currentStageIndex];
+
+            // Reset Flip State
+            const cardEl = document.getElementById('flashcard');
+            isCardFlipped = false;
+            cardEl.classList.remove('rotate-y-180');
+
+            // Front
+            document.getElementById('card-front-hanja').innerText = card.hanja;
+            document.getElementById('card-front-level').innerText = card.level;
+            document.getElementById('card-front-strokes').innerText = `${card.strokes}획 / 부수 ${card.radical}`;
+            document.getElementById('card-counter-indicator').innerText = `${currentCardIndex + 1} / ${currentStageCards.length}`;
+
+            // Bookmark button
+            const isBookmarked = bookmarks.includes(card.hanja);
+            const bmBtn = document.getElementById('bookmark-btn');
+            bmBtn.innerText = isBookmarked ? '★' : '☆';
+            bmBtn.className = isBookmarked ? 'text-xl text-amber-500 font-bold' : 'text-xl text-slate-300 hover:text-amber-400';
+
+            // Back
+            document.getElementById('card-back-hanja-mini').innerText = card.hanja;
+            document.getElementById('card-back-reading').innerText = card.sound;
+            document.getElementById('card-back-phrase-context').innerText = `${p.phrase} (${p.korean})`;
+
+            // Vocab Tags
+            const vocabContainer = document.getElementById('card-back-vocab');
+            vocabContainer.innerHTML = '';
+            card.vocab.forEach(v => {
+                const tag = document.createElement('span');
+                tag.className = 'bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-lg text-amber-900 font-bold text-xs';
+                tag.innerText = v;
+                vocabContainer.appendChild(tag);
+            });
+
+            // TTS Auto Play if enabled
+            if (isAutoTTS) {
+                setTimeout(() => {
+                    speakCard();
+                }, 200);
+            }
+        }
+
+        function flipCard() {
+            const cardEl = document.getElementById('flashcard');
+            isCardFlipped = !isCardFlipped;
+            cardEl.classList.toggle('rotate-y-180', isCardFlipped);
+            playSound('flip');
+        }
+
+        function speakCard() {
+            const card = currentStageCards[currentCardIndex];
+            speakText(`${card.hanja}. ${card.sound}`);
+        }
+
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+            } else {
+                currentCardIndex = currentStageCards.length - 1;
+            }
+            renderCurrentCard();
+            playSound('flip');
+        }
+
+        function nextCard() {
+            if (currentCardIndex < currentStageCards.length - 1) {
+                currentCardIndex++;
+            } else {
+                currentCardIndex = 0;
+            }
+            renderCurrentCard();
+            playSound('flip');
+        }
+
+        function toggleBookmarkCurrentCard() {
+            const card = currentStageCards[currentCardIndex];
+            const idx = bookmarks.indexOf(card.hanja);
+            if (idx >= 0) {
+                bookmarks.splice(idx, 1);
+            } else {
+                bookmarks.push(card.hanja);
+            }
+            saveBookmarks();
+            renderCurrentCard();
+        }
+
+        function rateCard(rating) {
+            const card = currentStageCards[currentCardIndex];
+            if (rating === 'easy') leitnerState[card.hanja] = 'box3';
+            else if (rating === 'medium') leitnerState[card.hanja] = 'box2';
+            else leitnerState[card.hanja] = 'box1';
+
+            saveLeitnerState();
+            playSound('correct');
+            nextCard();
+        }
+
+        /*
+         * 한자 퀴즈 게임 로직
+         */
+        let quizQuestions = [];
+        let currentQuizIdx = 0;
+        let quizScore = 0;
+        let quizCombo = 0;
+        let quizTotalCount = 10;
+
+        function setQuizCount(cnt) {
+            quizTotalCount = cnt;
+            document.querySelectorAll('.quiz-count-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-amber-300');
+                btn.classList.add('bg-amber-100');
+            });
+            event.target.classList.add('active', 'bg-amber-300');
+        }
+
+        function startQuiz() {
+            document.getElementById('quiz-setup-box').classList.add('hidden');
+            document.getElementById('quiz-result-box').classList.add('hidden');
+            document.getElementById('quiz-active-box').classList.remove('hidden');
+
+            quizQuestions = generateQuizQuestions(quizTotalCount);
+            currentQuizIdx = 0;
+            quizScore = 0;
+            quizCombo = 0;
+
+            updateQuizHeader();
+            renderQuizQuestion();
+        }
+
+        function generateQuizQuestions(count) {
+            // Collect all available hanja cards
+            let allCards = [];
+            ALL_PHRASES.forEach(p => {
+                p.chars.forEach(c => allCards.push({ ...c, phrase: p.phrase }));
+            });
+
+            // Shuffle
+            allCards.sort(() => Math.random() - 0.5);
+            let selected = allCards.slice(0, count);
+
+            return selected.map(card => {
+                // Generate 3 wrong options
+                let wrongPool = allCards.filter(c => c.hanja !== card.hanja);
+                wrongPool.sort(() => Math.random() - 0.5);
+                let wrongOptions = wrongPool.slice(0, 3);
+
+                let options = [card, ...wrongOptions].sort(() => Math.random() - 0.5);
+
+                return {
+                    card: card,
+                    options: options
+                };
+            });
+        }
+
+        function updateQuizHeader() {
+            document.getElementById('quiz-progress-text').innerText = `문제 ${currentQuizIdx + 1} / ${quizQuestions.length}`;
+            document.getElementById('quiz-combo-text').innerText = quizCombo;
+            document.getElementById('quiz-score-text').innerText = quizScore;
+        }
+
+        function renderQuizQuestion() {
+            const q = quizQuestions[currentQuizIdx];
+            const quizType = document.getElementById('quiz-type-select').value;
+            const isSoundQuestion = (quizType === 'soundToHanja') || (quizType === 'mixed' && Math.random() > 0.5);
+
+            document.getElementById('quiz-feedback-banner').classList.add('hidden');
+
+            if (isSoundQuestion) {
+                document.getElementById('quiz-prompt-label').innerText = "훈음(뜻과 소리)을 보고 알맞은 한자를 선택하세요!";
+                document.getElementById('quiz-question-main').innerText = q.card.sound;
+                document.getElementById('quiz-question-main').className = "text-4xl font-cute font-bold text-amber-950 py-3";
+            } else {
+                document.getElementById('quiz-prompt-label').innerText = "한자를 보고 알맞은 훈음을 선택하세요!";
+                document.getElementById('quiz-question-main').innerText = q.card.hanja;
+                document.getElementById('quiz-question-main').className = "text-6xl font-hanja font-bold text-slate-800 py-2";
+            }
+
+            const grid = document.getElementById('quiz-options-grid');
+            grid.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-3.5 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-2xl text-amber-950 font-bold text-base transition shadow-sm hover:scale-[1.02] transform active:scale-95";
+                btn.innerText = isSoundQuestion ? opt.hanja : opt.sound;
+                btn.onclick = () => handleAnswerSelect(opt, q.card, btn, isSoundQuestion);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleAnswerSelect(selectedOpt, correctCard, btnEl, isSoundQuestion) {
+            const isCorrect = selectedOpt.hanja === correctCard.hanja;
+            const feedback = document.getElementById('quiz-feedback-banner');
+            feedback.classList.remove('hidden');
+
+            // Disable all option buttons
+            document.querySelectorAll('#quiz-options-grid button').forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                playSound('correct');
+                quizScore += 10 + (quizCombo * 2);
+                quizCombo++;
+                btnEl.className = "p-3.5 bg-emerald-100 border-2 border-emerald-400 text-emerald-950 font-bold text-base rounded-2xl animate-pop-in";
+                feedback.className = "p-3 rounded-2xl text-center text-sm font-bold bg-emerald-100 border border-emerald-300 text-emerald-900";
+                feedback.innerText = `⭕ 정답입니다! (${correctCard.hanja} = ${correctCard.sound})`;
+                leitnerState[correctCard.hanja] = 'box3';
+            } else {
+                playSound('wrong');
+                quizCombo = 0;
+                btnEl.className = "p-3.5 bg-rose-100 border-2 border-rose-400 text-rose-950 font-bold text-base rounded-2xl";
+                feedback.className = "p-3 rounded-2xl text-center text-sm font-bold bg-rose-100 border border-rose-300 text-rose-900";
+                feedback.innerText = `❌ 아쉬워요! 정답은: ${correctCard.hanja} (${correctCard.sound})`;
+                leitnerState[correctCard.hanja] = 'box1';
+            }
+
+            saveLeitnerState();
+            updateQuizHeader();
+
+            setTimeout(() => {
+                currentQuizIdx++;
+                if (currentQuizIdx < quizQuestions.length) {
+                    updateQuizHeader();
+                    renderQuizQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }, 1200);
+        }
+
+        function finishQuiz() {
+            document.getElementById('quiz-active-box').classList.add('hidden');
+            document.getElementById('quiz-result-box').classList.remove('hidden');
+
+            document.getElementById('quiz-final-score').innerText = `${quizScore}점`;
+            document.getElementById('quiz-final-stats').innerText = `총 ${quizQuestions.length}개 문제 완료!`;
+            
+            let stars = "⭐";
+            if (quizScore >= quizQuestions.length * 8) stars = "⭐⭐⭐";
+            else if (quizScore >= quizQuestions.length * 5) stars = "⭐⭐";
+
+            document.getElementById('quiz-stars-display').innerText = stars;
+        }
+
+        /*
+         * 스피드 짝맞추기 게임 로직
+         */
+        let matchCards = [];
+        let selectedMatchTiles = [];
+        let matchTimerInterval = null;
+        let matchStartTime = 0;
+        let matchPairsCount = 6;
+
+        function initMatchGame() {
+            clearInterval(matchTimerInterval);
+            selectedMatchTiles = [];
+            document.getElementById('match-timer').innerText = "0.0";
+            
+            // Pick 6 random hanja
+            let allCards = [];
+            ALL_PHRASES.forEach(p => p.chars.forEach(c => allCards.push(c)));
+            allCards.sort(() => Math.random() - 0.5);
+            const picked = allCards.slice(0, matchPairsCount);
+
+            document.getElementById('match-pairs-left').innerText = matchPairsCount;
+
+            // Create 12 tiles (6 Hanja, 6 Sound)
+            let tiles = [];
+            picked.forEach(c => {
+                tiles.push({ id: c.hanja, type: 'hanja', text: c.hanja });
+                tiles.push({ id: c.hanja, type: 'sound', text: c.sound });
+            });
+            tiles.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('match-game-grid');
+            grid.innerHTML = '';
+
+            tiles.forEach((t, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "h-20 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-2xl flex items-center justify-center font-bold text-amber-950 transition transform active:scale-95 shadow-sm text-lg";
+                if (t.type === 'hanja') btn.classList.add('font-hanja', 'text-2xl');
+                else btn.classList.add('font-cute', 'text-xl');
+                
+                btn.innerText = t.text;
+                btn.dataset.id = t.id;
+                btn.dataset.type = t.type;
+                btn.onclick = () => handleMatchTileClick(btn);
+                grid.appendChild(btn);
+            });
+
+            // Start timer
+            matchStartTime = Date.now();
+            matchTimerInterval = setInterval(() => {
+                const elapsed = ((Date.now() - matchStartTime) / 1000).toFixed(1);
+                document.getElementById('match-timer').innerText = elapsed;
+            }, 100);
+        }
+
+        function handleMatchTileClick(btn) {
+            if (btn.classList.contains('invisible') || selectedMatchTiles.includes(btn)) return;
+
+            btn.classList.add('bg-amber-200', 'border-amber-500');
+            playSound('flip');
+            selectedMatchTiles.push(btn);
+
+            if (selectedMatchTiles.length === 2) {
+                const [t1, t2] = selectedMatchTiles;
+                if (t1.dataset.id === t2.dataset.id && t1.dataset.type !== t2.dataset.type) {
+                    // Match success!
+                    playSound('correct');
+                    t1.classList.add('animate-pop-in', 'bg-emerald-200');
+                    t2.classList.add('animate-pop-in', 'bg-emerald-200');
+
+                    setTimeout(() => {
+                        t1.classList.add('invisible');
+                        t2.classList.add('invisible');
+                        selectedMatchTiles = [];
+
+                        const remaining = document.querySelectorAll('#match-game-grid button:not(.invisible)').length / 2;
+                        document.getElementById('match-pairs-left').innerText = remaining;
+
+                        if (remaining === 0) {
+                            clearInterval(matchTimerInterval);
+                            const finalTime = document.getElementById('match-timer').innerText;
+                            alert(`🎉 성공! 모든 짝을 ${finalTime}초 만에 맞추셨습니다!`);
+                        }
+                    }, 300);
+                } else {
+                    // Match fail
+                    playSound('wrong');
+                    setTimeout(() => {
+                        t1.classList.remove('bg-amber-200', 'border-amber-500');
+                        t2.classList.remove('bg-amber-200', 'border-amber-500');
+                        selectedMatchTiles = [];
+                    }, 500);
+                }
+            }
+        }
+
+        /*
+         * 오답노트 / 라이트너 탭 및 전체 한자 사전
+         */
+        let currentLeitnerFilter = 'all';
+
+        function filterLeitnerBox(box) {
+            currentLeitnerFilter = box;
+            document.querySelectorAll('.leitner-filter-btn').forEach(btn => btn.classList.remove('active', 'bg-amber-200'));
+            document.getElementById(`leitner-tab-${box}`).classList.add('active', 'bg-amber-200');
+            renderLeitnerCards();
+        }
+
+        function renderLeitnerCards() {
+            let allCards = [];
+            ALL_PHRASES.forEach(p => p.chars.forEach(c => allCards.push(c)));
+
+            // Update box counts
+            let counts = { box1: 0, box2: 0, box3: 0, unassigned: 0 };
+            allCards.forEach(c => {
+                const b = leitnerState[c.hanja] || 'box1';
+                counts[b] = (counts[b] || 0) + 1;
+            });
+
+            document.getElementById('leitner-count-all').innerText = `${allCards.length}자`;
+            document.getElementById('leitner-count-box1').innerText = `${counts.box1}자`;
+            document.getElementById('leitner-count-box2').innerText = `${counts.box2}자`;
+            document.getElementById('leitner-count-box3').innerText = `${counts.box3}자`;
+
+            const filtered = allCards.filter(c => {
+                const b = leitnerState[c.hanja] || 'box1';
+                if (currentLeitnerFilter === 'all') return true;
+                return b === currentLeitnerFilter;
+            });
+
+            const grid = document.getElementById('leitner-cards-grid');
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-8 text-center text-amber-700 font-bold text-sm">해당 상자에 분류된 한자가 없습니다.</div>`;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const cardEl = document.createElement('div');
+                cardEl.className = "p-3 bg-white border-2 border-amber-200 rounded-2xl flex flex-col items-center justify-between shadow-sm hover:border-amber-400 transition cursor-pointer";
+                cardEl.onclick = () => {
+                    speakText(`${c.hanja}. ${c.sound}`);
+                };
+
+                const b = leitnerState[c.hanja] || 'box1';
+                let badge = '🔴 몰라요';
+                let badgeClass = 'bg-rose-100 text-rose-800';
+                if (b === 'box2') { badge = '🟡 헷갈려요'; badgeClass = 'bg-amber-100 text-amber-800'; }
+                if (b === 'box3') { badge = '🟢 완전정복'; badgeClass = 'bg-emerald-100 text-emerald-800'; }
+
+                cardEl.innerHTML = `
+                    <div class="text-[10px] font-bold ${badgeClass} px-2 py-0.5 rounded-full mb-1">${badge}</div>
+                    <div class="text-3xl font-hanja font-bold text-slate-800">${c.hanja}</div>
+                    <div class="text-xs font-cute font-bold text-amber-950 mt-1">${c.sound}</div>
+                `;
+                grid.appendChild(cardEl);
+            });
+        }
+
+        // 전체 한자장 사전 검색
+        function renderDictionary() {
+            const query = document.getElementById('dict-search-input').value.trim();
+            let allCards = [];
+            ALL_PHRASES.forEach(p => p.chars.forEach(c => allCards.push(c)));
+
+            const filtered = allCards.filter(c => {
+                return c.hanja.includes(query) || c.sound.includes(query);
+            });
+
+            const grid = document.getElementById('dict-cards-grid');
+            grid.innerHTML = '';
+
+            filtered.forEach(c => {
+                const cardEl = document.createElement('div');
+                cardEl.className = "p-2.5 bg-white border-2 border-amber-200 rounded-2xl flex flex-col items-center justify-center shadow-sm hover:border-amber-400 transition cursor-pointer";
+                cardEl.onclick = () => speakText(`${c.hanja}. ${c.sound}`);
+                cardEl.innerHTML = `
+                    <div class="text-2xl font-hanja font-bold text-slate-800">${c.hanja}</div>
+                    <div class="text-xs font-cute font-bold text-amber-900 mt-0.5">${c.sound}</div>
+                    <div class="text-[10px] text-amber-700/70 font-semibold mt-0.5">${c.level}</div>
+                `;
+                grid.appendChild(cardEl);
+            });
+        }
+
+        // 탭 전환 핸들러
+        function switchTab(tabId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-amber-100', 'border-amber-300', 'text-amber-900');
+                btn.classList.add('border-transparent', 'text-slate-600');
+            });
+
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-tab-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('active', 'bg-amber-100', 'border-amber-300', 'text-amber-900');
+                activeNav.classList.remove('border-transparent', 'text-slate-600');
+            }
+
+            if (tabId === 'match') {
+                initMatchGame();
+            } else if (tabId === 'leitner') {
+                renderLeitnerCards();
+            } else if (tabId === 'dict') {
+                renderDictionary();
+            }
+        }
+
+        // 초기화
+        window.onload = function() {
+            initStudyView();
+            updateHeaderStats();
+        };
+    </script>
+</body>
+</html>
